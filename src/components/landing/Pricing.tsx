@@ -113,13 +113,17 @@ export function Pricing() {
     })();
   }, []);
 
-  const handleSubscribe = () => {
+  const handleSubscribe = (planId: string) => {
+    const checkoutUrl = `/checkout?planId=${planId}&connections=${connections}`;
     if (user) {
-      navigate({ to: "/subscription" });
+      navigate({
+        to: "/checkout",
+        search: { planId, connections },
+      });
     } else {
       navigate({
         to: "/login",
-        search: { redirect: "/subscription" },
+        search: { redirect: checkoutUrl },
       });
     }
   };
@@ -222,7 +226,7 @@ export function Pricing() {
                     !p.highlight && "bg-white/10 text-foreground hover:bg-white/15",
                   )}
                   variant={p.highlight ? "default" : "secondary"}
-                  onClick={handleSubscribe}
+                  onClick={() => handleSubscribe(p.id)}
                 >
                   اشترك الآن
                 </Button>

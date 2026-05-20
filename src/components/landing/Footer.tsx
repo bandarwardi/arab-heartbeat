@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+
 export function Footer() {
   return (
     <footer className="border-t border-white/5 py-12">
@@ -29,9 +31,9 @@ export function Footer() {
           <div>
             <h4 className="font-bold">قانوني</h4>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-foreground">سياسة الخصوصية</a></li>
-              <li><a href="#" className="hover:text-foreground">شروط الاستخدام</a></li>
-              <li><a href="#" className="hover:text-foreground">سياسة الاسترداد</a></li>
+              <li><Link to="/privacy-policy" className="hover:text-foreground">سياسة الخصوصية</Link></li>
+              <li><Link to="/terms-of-service" className="hover:text-foreground">شروط الاستخدام</Link></li>
+              <li><Link to="/refund-policy" className="hover:text-foreground">سياسة الاسترداد</Link></li>
               <li><a href="#" className="hover:text-foreground">من نحن</a></li>
             </ul>
           </div>
