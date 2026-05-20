@@ -12,7 +12,7 @@ import {
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppShell } from "@/components/app/AppShell";
 import { getDb } from "@/lib/firebase";
-import type { UserProfile } from "@/contexts/AuthContext";
+import type { UserProfile, Device } from "@/contexts/AuthContext";
 import {
   Loader2,
   Users,
@@ -92,6 +92,85 @@ function Inner() {
   const [planPaddlePriceId, setPlanPaddlePriceId] = useState("");
   const [planPerks, setPlanPerks] = useState<string[]>([""]);
   const [savingPlan, setSavingPlan] = useState(false);
+
+  // Device Dialog States
+  const [deviceDialogOpen, setDeviceDialogOpen] = useState(false);
+  const [selectedUserForDevices, setSelectedUserForDevices] = useState<UserProfile | null>(null);
+  const [devicesList, setDevicesList] = useState<Device[]>([]);
+  const [savingDevices, setSavingDevices] = useState(false);
+
+  const getDeviceLimit = (u: UserProfile) => {
+    const active = u.subscriptionStatus === "active" || u.subscriptionStatus === "trialing";
+    if (!active) return 0;
+    return u.connections || 1;
+  };
+
+  function openDeviceDialog(user: UserProfile) {
+    setSelectedUserForDevices(user);
+    setDevicesList(user.devices || []);
+    setDeviceDialogOpen(true);
+  }
+
+  function handleDeviceChange(index: number, field: keyof Device, value: string) {
+    setDevicesList((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: value };
+      return next;
+    });
+  }
+
+  function addDeviceField() {
+    const limit = selectedUserForDevices ? getDeviceLimit(selectedUserForDevices) : 0;
+    if (devicesList.length >= limit) {
+      toast.error(`لقد وصلت للحد الأقصى المسموح به (${limit} أجهزة) لهذا الاشتراك`);
+      return;
+    }
+    setDevicesList((prev) => [
+      ...prev,
+      { macAddress: "", deviceKey: "", username: "", deviceType: "" },
+    ]);
+  }
+
+  function removeDeviceField(index: number) {
+    setDevicesList((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  async function handleSaveDevices() {
+    if (!selectedUserForDevices) return;
+
+    // Validate and filter out fully empty device objects
+    const filteredDevices = devicesList.filter(
+      (d) =>
+        d.macAddress.trim() !== "" ||
+        d.deviceKey.trim() !== "" ||
+        d.username.trim() !== "" ||
+        d.deviceType.trim() !== ""
+    );
+
+    setSavingDevices(true);
+    try {
+      const db = getDb();
+      await updateDoc(doc(db, "users", selectedUserForDevices.uid), {
+        devices: filteredDevices,
+      });
+
+      // Update local state
+      setUsers((prev) => {
+        if (!prev) return null;
+        return prev.map((u) =>
+          u.uid === selectedUserForDevices.uid ? { ...u, devices: filteredDevices } : u
+        );
+      });
+
+      toast.success("تم تحديث الأجهزة بنجاح 🎉");
+      setDeviceDialogOpen(false);
+    } catch (e) {
+      toast.error("فشل حفظ الأجهزة");
+      console.error(e);
+    } finally {
+      setSavingDevices(false);
+    }
+  }
 
   const fetchUsers = async () => {
     try {
@@ -396,6 +475,7 @@ function Inner() {
                     <th className="px-5 py-3 font-medium">الدور</th>
                     <th className="px-5 py-3 font-medium">حالة الاشتراك</th>
                     <th className="px-5 py-3 font-medium">تعديل الاشتراك</th>
+                    <th className="px-5 py-3 font-medium">الأجهزة المربوطة</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -431,6 +511,16 @@ function Inner() {
                             <SelectItem value="past_due">متأخر الدفع (Past Due)</SelectItem>
                           </SelectContent>
                         </Select>
+                      </td>
+                      <td className="px-5 py-4">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openDeviceDialog(u)}
+                          className="cursor-pointer text-xs h-8 border-white/10 hover:bg-white/5"
+                        >
+                          الأجهزة ({u.devices?.length || 0}/{getDeviceLimit(u)})
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -689,6 +779,127 @@ function Inner() {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Device Management Dialog */}
+      <Dialog open={deviceDialogOpen} onOpenChange={setDeviceDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-card border-white/10 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center gap-2">
+              <span>إدارة أجهزة المستخدم:</span>
+              <span className="text-primary">{selectedUserForDevices?.displayName || selectedUserForDevices?.email}</span>
+            </DialogTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              الحد الأقصى للأجهزة في الاشتراك الحالي:{" "}
+              <span className="text-white font-semibold">
+                {selectedUserForDevices ? getDeviceLimit(selectedUserForDevices) : 0}
+              </span>{" "}
+              | المربوطة حالياً:{" "}
+              <span className="text-white font-semibold">{devicesList.length}</span>
+            </p>
+          </DialogHeader>
+
+          <div className="space-y-6 my-4">
+            {devicesList.length === 0 ? (
+              <div className="text-center py-8 border border-dashed border-white/10 rounded-2xl bg-white/[0.01]">
+                <p className="text-muted-foreground text-sm">لا توجد أجهزة مربوطة بهذا الحساب حالياً.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {devicesList.map((device, idx) => (
+                  <div
+                    key={idx}
+                    className="relative p-5 rounded-2xl border border-white/10 bg-white/[0.02] space-y-4"
+                  >
+                    <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                      <span className="text-xs font-semibold text-primary">الجهاز #{idx + 1}</span>
+                      <Button
+                        size="icon"
+                        variant="destructive"
+                        onClick={() => removeDeviceField(idx)}
+                        className="h-8 w-8 rounded-lg cursor-pointer"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">MAC Address (عنوان MAC)</Label>
+                        <Input
+                          placeholder="00:1A:2B:3C:4D:5E"
+                          value={device.macAddress}
+                          onChange={(e) => handleDeviceChange(idx, "macAddress", e.target.value)}
+                          className="bg-background/50 border-white/10 h-9 text-sm"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">Device Key (مفتاح الجهاز)</Label>
+                        <Input
+                          placeholder="DK-XXXX-XXXX"
+                          value={device.deviceKey}
+                          onChange={(e) => handleDeviceChange(idx, "deviceKey", e.target.value)}
+                          className="bg-background/50 border-white/10 h-9 text-sm"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">Username (اسم المستخدم)</Label>
+                        <Input
+                          placeholder="user_entec"
+                          value={device.username}
+                          onChange={(e) => handleDeviceChange(idx, "username", e.target.value)}
+                          className="bg-background/50 border-white/10 h-9 text-sm"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">Device Type (نوع الجهاز)</Label>
+                        <Input
+                          placeholder="Android, Windows, iOS..."
+                          value={device.deviceType}
+                          onChange={(e) => handleDeviceChange(idx, "deviceType", e.target.value)}
+                          className="bg-background/50 border-white/10 h-9 text-sm"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {selectedUserForDevices && devicesList.length < getDeviceLimit(selectedUserForDevices) && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addDeviceField}
+                className="w-full border-dashed border-white/20 hover:border-white/40 bg-transparent h-11 rounded-2xl cursor-pointer"
+              >
+                <Plus className="h-4 w-4 ml-2" />
+                إضافة جهاز جديد
+              </Button>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-3 border-t border-white/5 pt-4 mt-6">
+            <Button
+              variant="outline"
+              onClick={() => setDeviceDialogOpen(false)}
+              className="cursor-pointer border-white/10"
+            >
+              إلغاء
+            </Button>
+            <Button
+              onClick={handleSaveDevices}
+              disabled={savingDevices}
+              className="cursor-pointer bg-primary hover:bg-primary/90 text-black font-semibold"
+            >
+              {savingDevices && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+              حفظ الأجهزة
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

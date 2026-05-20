@@ -3,7 +3,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppShell } from "@/components/app/AppShell";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, AlertCircle, CreditCard, User, Loader2 } from "lucide-react";
+import { CheckCircle2, AlertCircle, CreditCard, User, Loader2, Laptop } from "lucide-react";
 import { useState } from "react";
 import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
@@ -185,6 +185,39 @@ function Inner() {
           </div>
         </div>
       </div>
+
+      {active && profile?.devices && profile.devices.length > 0 && (
+        <div className="rounded-2xl border border-white/10 bg-card/40 p-6 backdrop-blur">
+          <div className="flex items-center gap-3 text-primary border-b border-white/5 pb-4 mb-4">
+            <Laptop className="h-5 w-5" />
+            <h2 className="font-semibold">الأجهزة المربوطة بالحساب ({profile.devices.length})</h2>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {profile.devices.map((device, idx) => (
+              <div key={idx} className="p-4 rounded-xl border border-white/5 bg-white/[0.01] space-y-2 text-sm">
+                <div className="flex justify-between items-center border-b border-white/5 pb-1 mb-2">
+                  <span className="font-bold text-primary">جهاز #{idx + 1}</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 text-muted-foreground">
+                    {device.deviceType || "غير محدد"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground text-xs font-semibold">MAC Address:</span>
+                  <span className="font-mono text-xs text-white">{device.macAddress || "-"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground text-xs font-semibold">Device Key:</span>
+                  <span className="font-mono text-xs text-white">{device.deviceKey || "-"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground text-xs font-semibold">Username:</span>
+                  <span className="font-mono text-xs text-white">{device.username || "-"}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

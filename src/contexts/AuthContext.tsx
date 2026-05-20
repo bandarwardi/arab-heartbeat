@@ -18,6 +18,13 @@ import {
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { getFirebaseAuth, getDb, googleProvider } from "@/lib/firebase";
 
+export type Device = {
+  macAddress: string;
+  deviceKey: string;
+  username: string;
+  deviceType: string;
+};
+
 export type UserProfile = {
   uid: string;
   email: string | null;
@@ -37,6 +44,7 @@ export type UserProfile = {
   paddleSubscriptionId?: string | null;
   paddleCustomerId?: string | null;
   subscriptionUpdatedAt?: any;
+  devices?: Device[];
 };
 
 type AuthContextValue = {
