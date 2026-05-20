@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import logo from "@/assets/logo.png";
 
 export function Footer() {
   return (
@@ -7,12 +8,7 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary/15 text-primary ring-1 ring-primary/30">
-                <span className="text-lg font-black">E</span>
-              </span>
-              <span className="text-lg font-extrabold">
-                EN <span className="text-primary">TEC</span>
-              </span>
+              <img src={logo} alt="EN TEC" className="h-8 w-auto" />
             </div>
             <p className="mt-4 max-w-md text-sm text-muted-foreground">
               منصة بث رقمي فاخرة متعددة الأجهزة، بتجربة سلسة ودفع آمن ودعم على مدار

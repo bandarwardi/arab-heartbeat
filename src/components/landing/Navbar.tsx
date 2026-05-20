@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import logo from "@/assets/logo.png";
 
 const links = [
   { href: "/#features", label: "المميزات" },
@@ -21,12 +22,7 @@ export function Navbar() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary/15 text-primary ring-1 ring-primary/30">
-            <span className="text-lg font-black">E</span>
-          </span>
-          <span className="text-lg font-extrabold tracking-tight">
-            EN <span className="text-primary">TEC</span>
-          </span>
+          <img src={logo} alt="EN TEC" className="h-8 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">

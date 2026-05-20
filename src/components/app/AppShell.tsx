@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { LogOut, LayoutDashboard, CreditCard, ShieldCheck } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { profile, logout } = useAuth();
@@ -13,8 +14,8 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-white/5 bg-card/30 backdrop-blur">
         <div className="container mx-auto flex items-center justify-between px-6 py-4">
-          <Link to="/" className="text-lg font-bold tracking-wider text-primary">
-            EN TEC
+          <Link to="/" className="flex items-center gap-2">
+            <img src={logo} alt="EN TEC" className="h-8 w-auto" />
           </Link>
           <nav className="flex items-center gap-2">
             <Link to="/dashboard">

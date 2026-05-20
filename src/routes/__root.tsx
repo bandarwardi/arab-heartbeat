@@ -4,11 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  HeadContent,
-  Scripts,
 } from "@tanstack/react-router";
-
-import appCss from "../styles.css?url";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -70,62 +66,16 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "EN TEC — منصة البث الرقمي الفاخرة" },
-      {
-        name: "description",
-        content:
-          "EN TEC منصة اشتراك بث رقمي متعددة الأجهزة بتجربة فاخرة وأسعار مرنة ودفع آمن عبر Paddle.",
-      },
-      { name: "author", content: "EN TEC" },
-      { property: "og:title", content: "EN TEC — منصة البث الرقمي الفاخرة" },
-      {
-        property: "og:description",
-        content: "اشتراكات بث رقمي فاخرة متعددة الأجهزة مع تفعيل فوري ودعم متواصل.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="ar" dir="rtl">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Outlet />
-        <Toaster richColors position="top-center" />
-      </AuthProvider>
-    </QueryClientProvider>
+    <AuthProvider>
+      <Outlet />
+      <Toaster richColors position="top-center" />
+    </AuthProvider>
   );
 }
