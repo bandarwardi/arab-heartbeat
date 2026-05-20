@@ -55,18 +55,20 @@ export function Hero() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
-            <Button size="lg" className="font-semibold shadow-lg shadow-primary/25">
-              ابدأ اشتراكك الآن
-              <ArrowLeft className="ms-2 h-4 w-4" />
+            <Button size="lg" className="font-semibold shadow-lg shadow-primary/25 cursor-pointer" asChild>
+              <a href="#pricing">
+                ابدأ اشتراكك الآن
+                <ArrowLeft className="ms-2 h-4 w-4" />
+              </a>
             </Button>
-            <Button
+            {/* <Button
               size="lg"
               variant="outline"
               className="border-white/15 bg-white/5 backdrop-blur"
             >
               <PlayCircle className="me-2 h-5 w-5" />
               شاهد العرض
-            </Button>
+            </Button> */}
           </div>
 
           {/* mini stats row */}
