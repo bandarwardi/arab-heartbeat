@@ -30,11 +30,13 @@ export type UserProfile = {
   createdAt?: unknown;
   planId?: string;
   planTitle?: string;
+  planDuration?: string;
   connections?: number;
   price?: number;
   paddleTransactionId?: string | null;
   paddleSubscriptionId?: string | null;
   paddleCustomerId?: string | null;
+  subscriptionUpdatedAt?: any;
 };
 
 type AuthContextValue = {

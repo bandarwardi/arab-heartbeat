@@ -53,6 +53,33 @@ function Inner() {
     }
   }
 
+  const formatDate = (timestamp: any) => {
+    if (!timestamp) return "-";
+    if (timestamp.toDate) {
+      return timestamp.toDate().toLocaleDateString("ar-EG", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    }
+    if (timestamp.seconds) {
+      return new Date(timestamp.seconds * 1000).toLocaleDateString("ar-EG", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    }
+    try {
+      return new Date(timestamp).toLocaleDateString("ar-EG", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch (e) {
+      return "-";
+    }
+  };
+
   return (
     <div className="space-y-8">
       <div>
@@ -103,20 +130,24 @@ function Inner() {
 
             {active && (
               <dl className="mt-6 space-y-3 text-sm border-t border-white/5 pt-4">
-                {profile?.planTitle && (
-                  <div className="flex justify-between pb-2 border-b border-white/5">
-                    <dt className="text-muted-foreground font-medium">الباقة الحالية</dt>
-                    <dd className="font-semibold text-white">{profile.planTitle}</dd>
-                  </div>
-                )}
-                {profile?.connections && (
-                  <div className="flex justify-between pb-2 border-b border-white/5">
-                    <dt className="text-muted-foreground font-medium">عدد الأجهزة</dt>
-                    <dd className="font-semibold text-white">
-                      {profile.connections} {profile.connections === 1 ? "جهاز" : "أجهزة"}
-                    </dd>
-                  </div>
-                )}
+                <div className="flex justify-between pb-2 border-b border-white/5">
+                  <dt className="text-muted-foreground font-medium">الباقة الحالية</dt>
+                  <dd className="font-semibold text-white">{profile?.planTitle || "باقة مفعّلة"}</dd>
+                </div>
+                <div className="flex justify-between pb-2 border-b border-white/5">
+                  <dt className="text-muted-foreground font-medium">المدة الزمنية</dt>
+                  <dd className="font-semibold text-white">{profile?.planDuration || "شهري"}</dd>
+                </div>
+                <div className="flex justify-between pb-2 border-b border-white/5">
+                  <dt className="text-muted-foreground font-medium">تاريخ الاشتراك</dt>
+                  <dd className="font-semibold text-white">{formatDate(profile?.subscriptionUpdatedAt)}</dd>
+                </div>
+                <div className="flex justify-between pb-2 border-b border-white/5">
+                  <dt className="text-muted-foreground font-medium">عدد الأجهزة</dt>
+                  <dd className="font-semibold text-white">
+                    {profile?.connections || 1} { (profile?.connections || 1) === 1 ? "جهاز" : "أجهزة" }
+                  </dd>
+                </div>
                 {profile?.price && (
                   <div className="flex justify-between pb-2 border-b border-white/5">
                     <dt className="text-muted-foreground font-medium">قيمة الاشتراك</dt>

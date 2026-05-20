@@ -93,6 +93,7 @@ function Inner() {
             paddleCustomerId: event?.data?.customer?.id ?? null,
             planId: plan?.id ?? null,
             planTitle: plan?.title ?? null,
+            planDuration: plan?.durationLabel ?? null,
             connections: connections,
             price: totalPrice,
           });
@@ -136,6 +137,7 @@ function Inner() {
         uid: user.uid,
         planId: plan.id,
         planTitle: plan.title,
+        planDuration: plan.durationLabel,
         connections: connections,
         price: totalPrice,
       },

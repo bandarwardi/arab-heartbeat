@@ -72,6 +72,7 @@ export const paddleWebhook = onRequest(
 
       if (customData.planId) updateData.planId = customData.planId;
       if (customData.planTitle) updateData.planTitle = customData.planTitle;
+      if (customData.planDuration) updateData.planDuration = customData.planDuration;
       if (customData.connections) updateData.connections = Number(customData.connections);
       if (customData.price) updateData.price = Number(customData.price);
 
