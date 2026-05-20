@@ -280,7 +280,7 @@ function Inner() {
       case "past_due":
         return (
           <Badge variant="outline" className="border-rose-500/30 bg-rose-500/10 text-rose-400">
-            metأخر الدفع
+            متأخر الدفع
           </Badge>
         );
       default:
@@ -309,14 +309,21 @@ function Inner() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-3">
-          <Shield className="h-6 w-6 text-primary" />
-          <h1 className="text-3xl font-bold">لوحة التحكم والأدمن</h1>
+      <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-bl from-primary/15 via-card/60 to-card/30 p-8 backdrop-blur">
+        <div className="pointer-events-none absolute -end-20 -top-20 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
+        <div className="relative flex items-center gap-3">
+          <span className="grid h-11 w-11 place-items-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/30">
+            <Shield className="h-5 w-5" />
+          </span>
+          <div>
+            <h1 className="text-2xl font-extrabold sm:text-3xl">
+              لوحة التحكم والأدمن
+            </h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              إدارة المستخدمين وتعديل خطط وباقات الاشتراك ديناميكياً.
+            </p>
+          </div>
         </div>
-        <p className="text-sm text-muted-foreground">
-          إدارة حسابات وأدوار المستخدمين وتعديل خطط وباقات الاشتراك ديناميكياً.
-        </p>
       </div>
 
       {error && (
