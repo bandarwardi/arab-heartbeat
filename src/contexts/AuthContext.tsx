@@ -39,6 +39,7 @@ type AuthContextValue = {
   signInWithGoogle: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
+  reloadProfile: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -120,6 +121,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async logout() {
       const auth = getFirebaseAuth();
       await signOut(auth);
+    },
+    async reloadProfile() {
+      if (!user) return;
+      const db = getDb();
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (snap.exists()) {
+        setProfile(snap.data() as UserProfile);
+      }
     },
   };
 

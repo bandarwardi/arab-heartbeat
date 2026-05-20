@@ -1,9 +1,13 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppShell } from "@/components/app/AppShell";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, AlertCircle, CreditCard, User } from "lucide-react";
+import { CheckCircle2, AlertCircle, CreditCard, User, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { getDb } from "@/lib/firebase";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
@@ -21,10 +25,33 @@ function DashboardPage() {
 }
 
 function Inner() {
-  const { profile, user } = useAuth();
+  const { profile, user, reloadProfile } = useAuth();
+  const [canceling, setCanceling] = useState(false);
   const active =
     profile?.subscriptionStatus === "active" ||
     profile?.subscriptionStatus === "trialing";
+
+  async function handleCancelSubscription() {
+    if (!user) return;
+    if (!confirm("هل تريد فعلاً إلغاء اشتراكك؟")) return;
+    setCanceling(true);
+    try {
+      const db = getDb();
+      await updateDoc(doc(db, "users", user.uid), {
+        subscriptionStatus: "canceled",
+        subscriptionUpdatedAt: serverTimestamp(),
+      });
+      toast.success("تم إلغاء الاشتراك بنجاح");
+      if (reloadProfile) {
+        await reloadProfile();
+      }
+    } catch (e) {
+      toast.error("فشل إلغاء الاشتراك");
+      console.error("Cancellation error:", e);
+    } finally {
+      setCanceling(false);
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -50,31 +77,48 @@ function Inner() {
           </dl>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-card/40 p-6">
-          <div className="flex items-center gap-3 text-primary">
-            <CreditCard className="h-5 w-5" />
-            <h2 className="font-semibold">حالة الاشتراك</h2>
+        <div className="rounded-2xl border border-white/10 bg-card/40 p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-3 text-primary">
+              <CreditCard className="h-5 w-5" />
+              <h2 className="font-semibold">حالة الاشتراك</h2>
+            </div>
+            <div className="mt-4 flex items-center gap-2 text-sm">
+              {active ? (
+                <>
+                  <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+                  <span className="font-semibold text-emerald-400">
+                    مفعّل ({profile?.subscriptionStatus === "active" ? "نشط" : profile?.subscriptionStatus})
+                  </span>
+                </>
+              ) : (
+                <>
+                  <AlertCircle className="h-5 w-5 text-amber-400" />
+                  <span className="font-semibold text-amber-400">
+                    لا يوجد اشتراك نشط
+                  </span>
+                </>
+              )}
+            </div>
           </div>
-          <div className="mt-4 flex items-center gap-2 text-sm">
+          
+          <div className="mt-6">
             {active ? (
-              <>
-                <CheckCircle2 className="h-5 w-5 text-emerald-400" />
-                <span className="font-semibold text-emerald-400">
-                  مفعّل ({profile?.subscriptionStatus})
-                </span>
-              </>
+              <Button
+                variant="destructive"
+                onClick={handleCancelSubscription}
+                disabled={canceling}
+                className="cursor-pointer"
+              >
+                {canceling && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                إلغاء الاشتراك
+              </Button>
             ) : (
-              <>
-                <AlertCircle className="h-5 w-5 text-amber-400" />
-                <span className="font-semibold text-amber-400">
-                  لا يوجد اشتراك نشط
-                </span>
-              </>
+              <a href="/#pricing">
+                <Button className="cursor-pointer">اشترك الآن</Button>
+              </a>
             )}
           </div>
-          <Link to="/subscription" className="mt-6 inline-block">
-            <Button>{active ? "إدارة الاشتراك" : "اشترك الآن"}</Button>
-          </Link>
         </div>
       </div>
     </div>

@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
-import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as RefundPolicyRouteImport } from './routes/refund-policy'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
@@ -25,11 +24,6 @@ import { Route as IndexRouteImport } from './routes/index'
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
   path: '/terms-of-service',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SubscriptionRoute = SubscriptionRouteImport.update({
-  id: '/subscription',
-  path: '/subscription',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignupRoute = SignupRouteImport.update({
@@ -94,7 +88,6 @@ export interface FileRoutesByFullPath {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/signup': typeof SignupRoute
-  '/subscription': typeof SubscriptionRoute
   '/terms-of-service': typeof TermsOfServiceRoute
 }
 export interface FileRoutesByTo {
@@ -108,7 +101,6 @@ export interface FileRoutesByTo {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/signup': typeof SignupRoute
-  '/subscription': typeof SubscriptionRoute
   '/terms-of-service': typeof TermsOfServiceRoute
 }
 export interface FileRoutesById {
@@ -123,7 +115,6 @@ export interface FileRoutesById {
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/refund-policy': typeof RefundPolicyRoute
   '/signup': typeof SignupRoute
-  '/subscription': typeof SubscriptionRoute
   '/terms-of-service': typeof TermsOfServiceRoute
 }
 export interface FileRouteTypes {
@@ -139,7 +130,6 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/refund-policy'
     | '/signup'
-    | '/subscription'
     | '/terms-of-service'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -153,7 +143,6 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/refund-policy'
     | '/signup'
-    | '/subscription'
     | '/terms-of-service'
   id:
     | '__root__'
@@ -167,7 +156,6 @@ export interface FileRouteTypes {
     | '/privacy-policy'
     | '/refund-policy'
     | '/signup'
-    | '/subscription'
     | '/terms-of-service'
   fileRoutesById: FileRoutesById
 }
@@ -182,7 +170,6 @@ export interface RootRouteChildren {
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   RefundPolicyRoute: typeof RefundPolicyRoute
   SignupRoute: typeof SignupRoute
-  SubscriptionRoute: typeof SubscriptionRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
 }
 
@@ -193,13 +180,6 @@ declare module '@tanstack/react-router' {
       path: '/terms-of-service'
       fullPath: '/terms-of-service'
       preLoaderRoute: typeof TermsOfServiceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/subscription': {
-      id: '/subscription'
-      path: '/subscription'
-      fullPath: '/subscription'
-      preLoaderRoute: typeof SubscriptionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/signup': {
@@ -286,7 +266,6 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   RefundPolicyRoute: RefundPolicyRoute,
   SignupRoute: SignupRoute,
-  SubscriptionRoute: SubscriptionRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
 }
 export const routeTree = rootRouteImport

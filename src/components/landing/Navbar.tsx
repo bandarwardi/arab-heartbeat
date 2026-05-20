@@ -21,8 +21,11 @@ export function Navbar() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="EN TEC" className="h-8 w-auto" />
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="EN TEC" className="h-10 w-auto" />
+          <span className="text-xl font-extrabold tracking-wider text-white">
+            EN <span className="text-primary">TEC</span>
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">

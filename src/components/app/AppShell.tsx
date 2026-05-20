@@ -14,20 +14,17 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-white/5 bg-card/30 backdrop-blur">
         <div className="container mx-auto flex items-center justify-between px-6 py-4">
-          <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="EN TEC" className="h-8 w-auto" />
+          <Link to="/" className="flex items-center gap-3">
+            <img src={logo} alt="EN TEC" className="h-10 w-auto" />
+            <span className="text-xl font-extrabold tracking-wider text-white">
+              EN <span className="text-primary">TEC</span>
+            </span>
           </Link>
           <nav className="flex items-center gap-2">
             <Link to="/dashboard">
               <Button variant="ghost" size="sm">
                 <LayoutDashboard className="ml-2 h-4 w-4" />
                 لوحتي
-              </Button>
-            </Link>
-            <Link to="/subscription">
-              <Button variant="ghost" size="sm">
-                <CreditCard className="ml-2 h-4 w-4" />
-                اشتراكي
               </Button>
             </Link>
             {isAdmin && (

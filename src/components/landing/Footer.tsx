@@ -7,8 +7,11 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2">
-              <img src={logo} alt="EN TEC" className="h-8 w-auto" />
+            <div className="flex items-center gap-3">
+              <img src={logo} alt="EN TEC" className="h-10 w-auto" />
+              <span className="text-xl font-extrabold tracking-wider text-white">
+                EN <span className="text-primary">TEC</span>
+              </span>
             </div>
             <p className="mt-4 max-w-md text-sm text-muted-foreground">
               منصة بث رقمي فاخرة متعددة الأجهزة، بتجربة سلسة ودفع آمن ودعم على مدار
