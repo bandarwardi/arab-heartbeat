@@ -354,59 +354,65 @@ function Inner() {
 
           {stats && (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="rounded-xl border border-white/5 bg-card/25 p-5 backdrop-blur-sm">
-                <div className="flex items-center justify-between text-muted-foreground text-sm">
-                  <span>إجمالي الأعضاء</span>
-                  <Users className="h-4 w-4 text-primary" />
+              {[
+                { label: "إجمالي الأعضاء", value: stats.total, icon: Users, tone: "text-primary", ring: "ring-primary/30 bg-primary/10" },
+                { label: "الاشتراكات النشطة", value: stats.active, icon: UserCheck, tone: "text-emerald-300", ring: "ring-emerald-500/30 bg-emerald-500/10" },
+                { label: "ملغاة / متأخرة", value: stats.canceled, icon: Shield, tone: "text-rose-300", ring: "ring-rose-500/30 bg-rose-500/10" },
+                { label: "بدون اشتراك", value: stats.free, icon: Sparkles, tone: "text-amber-300", ring: "ring-amber-500/30 bg-amber-500/10" },
+              ].map((s) => (
+                <div
+                  key={s.label}
+                  className="group relative overflow-hidden rounded-2xl border border-white/10 bg-card/40 p-5 backdrop-blur transition hover:border-white/20"
+                >
+                  <div className="pointer-events-none absolute -end-8 -top-8 h-24 w-24 rounded-full bg-white/[0.02] blur-2xl transition group-hover:bg-white/[0.05]" />
+                  <div className="relative flex items-start justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground">{s.label}</p>
+                      <p className={`mt-2 text-3xl font-extrabold ${s.tone}`}>
+                        {s.value}
+                      </p>
+                    </div>
+                    <span className={`grid h-9 w-9 place-items-center rounded-xl ring-1 ${s.ring}`}>
+                      <s.icon className={`h-4 w-4 ${s.tone}`} />
+                    </span>
+                  </div>
                 </div>
-                <p className="mt-2 text-2xl font-bold">{stats.total}</p>
-              </div>
-              <div className="rounded-xl border border-white/5 bg-card/25 p-5 backdrop-blur-sm">
-                <div className="flex items-center justify-between text-muted-foreground text-sm">
-                  <span>الاشتراكات النشطة</span>
-                  <UserCheck className="h-4 w-4 text-emerald-400" />
-                </div>
-                <p className="mt-2 text-2xl font-bold text-emerald-400">{stats.active}</p>
-              </div>
-              <div className="rounded-xl border border-white/5 bg-card/25 p-5 backdrop-blur-sm">
-                <div className="flex items-center justify-between text-muted-foreground text-sm">
-                  <span>اشتراكات ملغاة / متأخرة</span>
-                  <Shield className="h-4 w-4 text-rose-400" />
-                </div>
-                <p className="mt-2 text-2xl font-bold text-rose-400">{stats.canceled}</p>
-              </div>
-              <div className="rounded-xl border border-white/5 bg-card/25 p-5 backdrop-blur-sm">
-                <div className="flex items-center justify-between text-muted-foreground text-sm">
-                  <span>أعضاء بدون اشتراك</span>
-                  <Sparkles className="h-4 w-4 text-amber-400" />
-                </div>
-                <p className="mt-2 text-2xl font-bold text-amber-400">{stats.free}</p>
-              </div>
+              ))}
             </div>
           )}
 
           {users && (
-            <div className="overflow-hidden rounded-2xl border border-white/10 bg-card/40">
+            <div className="overflow-hidden rounded-2xl border border-white/10 bg-card/40 backdrop-blur">
+              <div className="border-b border-white/5 px-5 py-4">
+                <h3 className="text-sm font-semibold">
+                  قائمة المستخدمين ({users.length})
+                </h3>
+              </div>
               <table className="w-full text-sm">
-                <thead className="bg-white/5 text-right">
+                <thead className="bg-white/[0.03] text-right text-xs uppercase tracking-wider text-muted-foreground">
                   <tr>
-                    <th className="px-4 py-3">الاسم</th>
-                    <th className="px-4 py-3">البريد الإلكتروني</th>
-                    <th className="px-4 py-3">الدور</th>
-                    <th className="px-4 py-3">حالة الاشتراك</th>
-                    <th className="px-4 py-3">تعديل الاشتراك</th>
+                    <th className="px-5 py-3 font-medium">الاسم</th>
+                    <th className="px-5 py-3 font-medium">البريد الإلكتروني</th>
+                    <th className="px-5 py-3 font-medium">الدور</th>
+                    <th className="px-5 py-3 font-medium">حالة الاشتراك</th>
+                    <th className="px-5 py-3 font-medium">تعديل الاشتراك</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map((u) => (
-                    <tr key={u.uid} className="border-t border-white/5 transition hover:bg-white/[0.01]">
-                      <td className="px-4 py-3 font-medium text-foreground">
-                        {u.displayName ?? "-"}
+                    <tr key={u.uid} className="border-t border-white/5 transition hover:bg-white/[0.025]">
+                      <td className="px-5 py-4 font-medium text-foreground">
+                        <div className="flex items-center gap-3">
+                          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary/15 text-xs font-bold text-primary ring-1 ring-primary/30">
+                            {(u.displayName ?? u.email ?? "?").charAt(0).toUpperCase()}
+                          </span>
+                          <span>{u.displayName ?? "-"}</span>
+                        </div>
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground">{u.email}</td>
-                      <td className="px-4 py-3">{getRoleBadge(u.role)}</td>
-                      <td className="px-4 py-3">{getStatusBadge(u.subscriptionStatus)}</td>
-                      <td className="px-4 py-3 min-w-[180px]">
+                      <td className="px-5 py-4 text-muted-foreground">{u.email}</td>
+                      <td className="px-5 py-4">{getRoleBadge(u.role)}</td>
+                      <td className="px-5 py-4">{getStatusBadge(u.subscriptionStatus)}</td>
+                      <td className="px-5 py-4 min-w-[200px]">
                         <Select
                           value={u.subscriptionStatus || "none"}
                           disabled={updatingId === u.uid}
