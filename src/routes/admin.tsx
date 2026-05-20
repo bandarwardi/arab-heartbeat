@@ -493,7 +493,7 @@ function Inner() {
                   </div>
 
                   <div className="mt-2 flex flex-col gap-1 text-[11px] text-muted-foreground border-t border-white/5 pt-2">
-                    <div>عدد الاتصالات المسموحة: {p.connections || 1}</div>
+                    <div>عدد الأجهزة المسموحة: {p.connections || 1}</div>
                     {p.paddlePriceId && (
                       <div className="font-mono text-[10px] truncate max-w-full" title={p.paddlePriceId}>
                         Paddle ID: {p.paddlePriceId}
@@ -585,7 +585,7 @@ function Inner() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="planConnections">عدد الاتصالات *</Label>
+                <Label htmlFor="planConnections">عدد الأجهزة *</Label>
                 <Select
                   value={planConnections}
                   onValueChange={setPlanConnections}
@@ -594,10 +594,10 @@ function Inner() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">اتصال واحد (1)</SelectItem>
-                    <SelectItem value="2">اتصالان (2)</SelectItem>
-                    <SelectItem value="3">3 اتصالات (3)</SelectItem>
-                    <SelectItem value="5">5 اتصالات (5)</SelectItem>
+                    <SelectItem value="1">جهاز واحد (1)</SelectItem>
+                    <SelectItem value="2">جهازان (2)</SelectItem>
+                    <SelectItem value="3">3 أجهزة (3)</SelectItem>
+                    <SelectItem value="5">5 أجهزة (5)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

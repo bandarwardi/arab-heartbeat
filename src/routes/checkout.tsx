@@ -195,12 +195,12 @@ function Inner() {
               <span className="font-medium">{plan.title}</span>
             </div>
             <div className="flex justify-between items-center text-sm">
-              <span className="text-muted-foreground">عدد الاتصالات المتزامنة</span>
-              <span className="font-medium">{connections} {connections === 1 ? "اتصال" : "اتصالات"}</span>
+              <span className="text-muted-foreground">عدد الأجهزة المتزامنة</span>
+              <span className="font-medium">{connections} {connections === 1 ? "جهاز" : "أجهزة"}</span>
             </div>
             <div className="flex justify-between items-center text-sm">
-              <span className="text-muted-foreground">تكلفة الاتصال الواحد</span>
-              <span className="font-medium">${plan.basePrice} / للاتصال</span>
+              <span className="text-muted-foreground">تكلفة الجهاز الواحد</span>
+              <span className="font-medium">${plan.basePrice} / للجهاز</span>
             </div>
             
             <div className="border-t border-white/5 pt-4 flex justify-between items-baseline">

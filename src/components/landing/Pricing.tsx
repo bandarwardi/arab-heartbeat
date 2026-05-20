@@ -146,12 +146,12 @@ export function Pricing() {
             خطط مرنة تناسب الجميع
           </h2>
           <p className="mt-4 text-muted-foreground">
-            اختر عدد الاتصالات المتزامنة، وسيتم احتساب السعر تلقائياً.
+            اختر عدد الأجهزة المتزامنة، وسيتم احتساب السعر تلقائياً.
           </p>
         </div>
 
         <div className="mt-10 flex flex-col items-center gap-3">
-          <span className="text-sm text-muted-foreground">عدد الاتصالات</span>
+          <span className="text-sm text-muted-foreground">عدد الأجهزة</span>
           <div className="inline-flex rounded-full border border-white/10 bg-card/60 p-1 backdrop-blur">
             {connectionOptions.map((n) => (
               <button
@@ -208,7 +208,7 @@ export function Pricing() {
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
                   ${p.basePrice} × {connections}{" "}
-                  {connections === 1 ? "اتصال" : "اتصالات"}
+                  {connections === 1 ? "جهاز" : "أجهزة"}
                 </p>
 
                 <ul className="mt-6 space-y-3 text-sm flex-1">

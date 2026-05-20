@@ -278,7 +278,7 @@ function Inner() {
                 </div>
 
                 <div className="mt-2 text-xs text-muted-foreground">
-                  عدد الاتصالات: {p.connections || 1}
+                  عدد الأجهزة: {p.connections || 1}
                 </div>
 
                 <ul className="mt-6 flex-1 space-y-2 text-xs text-muted-foreground border-t border-white/5 pt-4">
