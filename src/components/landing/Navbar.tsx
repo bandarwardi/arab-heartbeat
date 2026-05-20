@@ -5,11 +5,11 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const links = [
-  { href: "#features", label: "المميزات" },
-  { href: "#pricing", label: "الأسعار" },
-  { href: "#devices", label: "الأجهزة" },
-  { href: "#faq", label: "الأسئلة" },
-  { href: "#contact", label: "تواصل" },
+  { href: "/#features", label: "المميزات" },
+  { href: "/#pricing", label: "الأسعار" },
+  { href: "/#devices", label: "الأجهزة" },
+  { href: "/#faq", label: "الأسئلة" },
+  { href: "/#contact", label: "تواصل" },
 ];
 
 export function Navbar() {

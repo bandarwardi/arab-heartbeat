@@ -22,10 +22,10 @@ export function Footer() {
           <div>
             <h4 className="font-bold">روابط</h4>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-              <li><a href="#features" className="hover:text-foreground">المميزات</a></li>
-              <li><a href="#pricing" className="hover:text-foreground">الأسعار</a></li>
-              <li><a href="#faq" className="hover:text-foreground">الأسئلة الشائعة</a></li>
-              <li><a href="#contact" className="hover:text-foreground">تواصل</a></li>
+              <li><a href="/#features" className="hover:text-foreground">المميزات</a></li>
+              <li><a href="/#pricing" className="hover:text-foreground">الأسعار</a></li>
+              <li><a href="/#faq" className="hover:text-foreground">الأسئلة الشائعة</a></li>
+              <li><a href="/#contact" className="hover:text-foreground">تواصل</a></li>
             </ul>
           </div>
           <div>
@@ -34,7 +34,7 @@ export function Footer() {
               <li><Link to="/privacy-policy" className="hover:text-foreground">سياسة الخصوصية</Link></li>
               <li><Link to="/terms-of-service" className="hover:text-foreground">شروط الاستخدام</Link></li>
               <li><Link to="/refund-policy" className="hover:text-foreground">سياسة الاسترداد</Link></li>
-              <li><a href="#" className="hover:text-foreground">من نحن</a></li>
+              <li><Link to="/about-us" className="hover:text-foreground">من نحن</Link></li>
             </ul>
           </div>
         </div>

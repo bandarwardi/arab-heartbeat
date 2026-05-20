@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/app/AppShell";
 import { ShieldCheck, Receipt, RotateCcw, AlertTriangle, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Footer } from "@/components/landing/Footer";
 
 export const Route = createFileRoute("/refund-policy")({
   component: RefundPolicyPage,
@@ -123,7 +124,7 @@ function RefundPolicyPage() {
               4. خطوات تقديم ومراجعة الطلبات
             </h2>
             <p>
-              لتقديم طلب استرداد، يجب اتباع الخطوات التالية بدقة:
+              لتقديم طلب استرداد, يجب اتباع الخطوات التالية بدقة:
             </p>
             <ol className="list-decimal list-inside space-y-2 mr-4 text-xs">
               <li>
@@ -143,21 +144,8 @@ function RefundPolicyPage() {
 
         </div>
 
-        {/* Support link or home */}
-        <div className="text-center space-y-4">
-          <p className="text-sm text-muted-foreground">
-            هل لديك أي استفسار آخر بخصوص سياسة الاسترداد؟ فريق الدعم متواجد دائماً لمساعدتك.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Link to="/">
-              <Button variant="outline" className="cursor-pointer">العودة للرئيسية</Button>
-            </Link>
-            <a href="#contact">
-              <Button className="cursor-pointer">تواصل مع الدعم</Button>
-            </a>
-          </div>
-        </div>
       </div>
+      <Footer />
     </AppShell>
   );
 }

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/app/AppShell";
 import { FileText, CheckCircle, Ban, HelpCircle, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Footer } from "@/components/landing/Footer";
 
 export const Route = createFileRoute("/terms-of-service")({
   component: TermsOfServicePage,
@@ -148,13 +149,8 @@ function TermsOfServicePage() {
 
         </div>
 
-        {/* Footer info */}
-        <div className="text-center pt-4">
-          <Link to="/">
-            <Button className="cursor-pointer">العودة للصفحة الرئيسية</Button>
-          </Link>
-        </div>
       </div>
+      <Footer />
     </AppShell>
   );
 }
