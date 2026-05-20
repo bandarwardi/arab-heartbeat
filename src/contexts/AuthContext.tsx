@@ -28,6 +28,13 @@ export type UserProfile = {
   role: "user" | "admin";
   subscriptionStatus: "none" | "active" | "trialing" | "canceled" | "past_due";
   createdAt?: unknown;
+  planId?: string;
+  planTitle?: string;
+  connections?: number;
+  price?: number;
+  paddleTransactionId?: string | null;
+  paddleSubscriptionId?: string | null;
+  paddleCustomerId?: string | null;
 };
 
 type AuthContextValue = {

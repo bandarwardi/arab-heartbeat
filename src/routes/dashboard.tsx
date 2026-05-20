@@ -100,6 +100,39 @@ function Inner() {
                 </>
               )}
             </div>
+
+            {active && (
+              <dl className="mt-6 space-y-3 text-sm border-t border-white/5 pt-4">
+                {profile?.planTitle && (
+                  <div className="flex justify-between pb-2 border-b border-white/5">
+                    <dt className="text-muted-foreground font-medium">الباقة الحالية</dt>
+                    <dd className="font-semibold text-white">{profile.planTitle}</dd>
+                  </div>
+                )}
+                {profile?.connections && (
+                  <div className="flex justify-between pb-2 border-b border-white/5">
+                    <dt className="text-muted-foreground font-medium">عدد الأجهزة</dt>
+                    <dd className="font-semibold text-white">
+                      {profile.connections} {profile.connections === 1 ? "جهاز" : "أجهزة"}
+                    </dd>
+                  </div>
+                )}
+                {profile?.price && (
+                  <div className="flex justify-between pb-2 border-b border-white/5">
+                    <dt className="text-muted-foreground font-medium">قيمة الاشتراك</dt>
+                    <dd className="font-semibold text-primary">${profile.price}</dd>
+                  </div>
+                )}
+                {profile?.paddleTransactionId && (
+                  <div className="flex justify-between pb-2 last:border-0">
+                    <dt className="text-muted-foreground font-medium">معرف المعاملة</dt>
+                    <dd className="font-mono text-xs text-muted-foreground max-w-[150px] truncate" title={profile.paddleTransactionId}>
+                      {profile.paddleTransactionId}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            )}
           </div>
           
           <div className="mt-6">

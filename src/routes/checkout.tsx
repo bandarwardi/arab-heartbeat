@@ -85,11 +85,16 @@ function Inner() {
       if (name === "checkout.completed") {
         try {
           const db = getDb();
+          const totalPrice = plan ? plan.basePrice * connections : 0;
           await updateDoc(doc(db, "users", user.uid), {
             subscriptionStatus: "active",
             subscriptionUpdatedAt: serverTimestamp(),
             paddleTransactionId: event?.data?.transaction_id ?? null,
             paddleCustomerId: event?.data?.customer?.id ?? null,
+            planId: plan?.id ?? null,
+            planTitle: plan?.title ?? null,
+            connections: connections,
+            price: totalPrice,
           });
           toast.success("تم تفعيل اشتراكك بنجاح 🎉");
           navigate({ to: "/dashboard" });
@@ -100,7 +105,7 @@ function Inner() {
         setBusy(false);
       }
     });
-  }, [user]);
+  }, [user, plan, connections]);
 
   async function handleCheckout() {
     if (!user || !plan) return;
@@ -122,10 +127,18 @@ function Inner() {
       return;
     }
 
+    const totalPrice = plan.basePrice * connections;
+
     paddle.Checkout.open({
       items: [{ priceId, quantity: 1 }],
       customer: { email: user.email ?? "" },
-      customData: { uid: user.uid },
+      customData: {
+        uid: user.uid,
+        planId: plan.id,
+        planTitle: plan.title,
+        connections: connections,
+        price: totalPrice,
+      },
       settings: {
         displayMode: "overlay",
         theme: "dark",
