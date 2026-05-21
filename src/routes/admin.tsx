@@ -69,7 +69,6 @@ interface DBPlan {
   highlight?: boolean;
   perks: string[];
   connections?: number;
-  paddlePriceId?: string;
 }
 
 function Inner() {
@@ -89,7 +88,6 @@ function Inner() {
   const [planBadge, setPlanBadge] = useState("");
   const [planHighlight, setPlanHighlight] = useState(false);
   const [planConnections, setPlanConnections] = useState("1");
-  const [planPaddlePriceId, setPlanPaddlePriceId] = useState("");
   const [planPerks, setPlanPerks] = useState<string[]>([""]);
   const [savingPlan, setSavingPlan] = useState(false);
 
@@ -245,7 +243,6 @@ function Inner() {
     setPlanBadge("");
     setPlanHighlight(false);
     setPlanConnections("1");
-    setPlanPaddlePriceId("");
     setPlanPerks([""]);
     setDialogOpen(true);
   }
@@ -258,7 +255,6 @@ function Inner() {
     setPlanBadge(plan.badge || "");
     setPlanHighlight(!!plan.highlight);
     setPlanConnections((plan.connections || 1).toString());
-    setPlanPaddlePriceId(plan.paddlePriceId || "");
     setPlanPerks(plan.perks.length > 0 ? plan.perks : [""]);
     setDialogOpen(true);
   }
@@ -281,7 +277,6 @@ function Inner() {
         badge: planBadge || null,
         highlight: planHighlight,
         connections: Number(planConnections),
-        paddlePriceId: planPaddlePriceId || null,
         perks: filteredPerks.length > 0 ? filteredPerks : ["جودة بث فائقة الوضوح"],
       };
 

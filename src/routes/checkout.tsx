@@ -1,13 +1,22 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AppShell } from "@/components/app/AppShell";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { getPaddle, PADDLE_PRICES } from "@/lib/paddle";
+import { createPaymentSession } from "@/lib/card2crypto";
 import { getDb } from "@/lib/firebase";
-import { CheckCircle2, Loader2, Sparkles, Check, ArrowRight, ShieldCheck, CreditCard } from "lucide-react";
+import {
+  CheckCircle2,
+  Loader2,
+  Sparkles,
+  Check,
+  ArrowRight,
+  ShieldCheck,
+  CreditCard,
+  ExternalLink,
+} from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/checkout")({
@@ -40,7 +49,6 @@ interface DBPlan {
   highlight?: boolean;
   perks: string[];
   connections?: number;
-  paddlePriceId?: string;
 }
 
 function Inner() {
@@ -50,6 +58,7 @@ function Inner() {
   const [plan, setPlan] = useState<DBPlan | null>(null);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [paymentOpened, setPaymentOpened] = useState(false);
 
   useEffect(() => {
     if (!planId) {
@@ -77,77 +86,42 @@ function Inner() {
     })();
   }, [planId]);
 
-  useEffect(() => {
-    if (!user) return;
-    getPaddle(async (event: any) => {
-      const name = event?.name as string | undefined;
-      if (!name) return;
-      if (name === "checkout.completed") {
-        try {
-          const db = getDb();
-          const totalPrice = plan ? plan.basePrice * connections : 0;
-          await updateDoc(doc(db, "users", user.uid), {
-            subscriptionStatus: "active",
-            subscriptionUpdatedAt: serverTimestamp(),
-            paddleTransactionId: event?.data?.transaction_id ?? null,
-            paddleCustomerId: event?.data?.customer?.id ?? null,
-            planId: plan?.id ?? null,
-            planTitle: plan?.title ?? null,
-            planDuration: plan?.durationLabel ?? null,
-            connections: connections,
-            price: totalPrice,
-          });
-          toast.success("تم تفعيل اشتراكك بنجاح 🎉");
-          navigate({ to: "/dashboard" });
-        } catch (e) {
-          console.error("Failed to update user profile on checkout success:", e);
-        }
-      } else if (name === "checkout.closed") {
-        setBusy(false);
-      }
-    });
-  }, [user, plan, connections]);
-
   async function handleCheckout() {
     if (!user || !plan) return;
-
-    // Use specific plan paddlePriceId if available, or fallback to connection-based
-    const connectionsStr = connections.toString();
-    const priceId = plan.paddlePriceId || PADDLE_PRICES[connectionsStr];
-
-    if (!priceId) {
-      toast.error("هذه الخطة غير مهيّأة بعد. يلزم إضافة Price ID في Paddle.");
+    if (!user.email) {
+      toast.error("يجب أن يكون لديك بريد إلكتروني مرتبط بالحساب لإتمام الدفع");
       return;
     }
 
     setBusy(true);
-    const paddle = await getPaddle();
-    if (!paddle) {
-      toast.error("تعذّر تحميل بوابة دفع Paddle");
-      setBusy(false);
-      return;
-    }
+    try {
+      const totalPrice = plan.basePrice * connections;
 
-    const totalPrice = plan.basePrice * connections;
-
-    paddle.Checkout.open({
-      items: [{ priceId, quantity: 1 }],
-      customer: { email: user.email ?? "" },
-      customData: {
+      const session = await createPaymentSession({
         uid: user.uid,
+        email: user.email,
         planId: plan.id,
         planTitle: plan.title,
         planDuration: plan.durationLabel,
-        connections: connections,
+        connections,
         price: totalPrice,
-      },
-      settings: {
-        displayMode: "overlay",
-        theme: "dark",
-        locale: "ar",
-        successUrl: `${window.location.origin}/dashboard`,
-      },
-    });
+      });
+
+      // Open the Card2Crypto payment page in a new tab
+      // (Card2Crypto does not allow iframe embedding)
+      window.open(session.paymentUrl, "_blank", "noopener,noreferrer");
+
+      setPaymentOpened(true);
+      toast.success(
+        "تم فتح صفحة الدفع في تبويب جديد. بعد إتمام الدفع سيتم تفعيل اشتراكك تلقائياً.",
+        { duration: 8000 }
+      );
+    } catch (e: any) {
+      console.error("Checkout error:", e);
+      toast.error(e?.message || "فشل فتح بوابة الدفع، يرجى المحاولة مجدداً");
+    } finally {
+      setBusy(false);
+    }
   }
 
   if (loading) {
@@ -180,9 +154,30 @@ function Inner() {
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">مراجعة الطلب</h1>
         <p className="text-sm text-muted-foreground">
-          يرجى مراجعة تفاصيل اشتراكك وباقة الدفع قبل الانتقال لبوابة الدفع الآمنة.
+          يرجى مراجعة تفاصيل اشتراكك قبل الانتقال لبوابة الدفع الآمنة.
         </p>
       </div>
+
+      {/* Payment Opened Confirmation Banner */}
+      {paymentOpened && (
+        <div className="flex items-start gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5">
+          <CheckCircle2 className="h-6 w-6 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="font-semibold text-emerald-300 text-sm">تم فتح صفحة الدفع في تبويب جديد!</p>
+            <p className="text-xs text-emerald-400/80">
+              بعد إتمام الدفع بنجاح سيتم تفعيل اشتراكك تلقائياً خلال لحظات. يمكنك التحقق من
+              حالة الاشتراك في{" "}
+              <button
+                onClick={() => navigate({ to: "/dashboard" })}
+                className="underline font-semibold"
+              >
+                لوحة التحكم
+              </button>
+              .
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Main Order Card */}
       <div className="rounded-2xl border border-white/10 bg-card/30 backdrop-blur-md overflow-hidden">
@@ -217,7 +212,7 @@ function Inner() {
               <span className="text-muted-foreground">تكلفة الجهاز الواحد</span>
               <span className="font-medium">${plan.basePrice} / للجهاز</span>
             </div>
-            
+
             <div className="border-t border-white/5 pt-4 flex justify-between items-baseline">
               <span className="font-semibold text-base">المبلغ الإجمالي</span>
               <div className="text-right">
@@ -244,6 +239,23 @@ function Inner() {
         </div>
       </div>
 
+      {/* Payment Methods Info */}
+      <div className="rounded-xl border border-white/5 bg-white/[0.02] p-5 space-y-3">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
+          طرق الدفع المقبولة
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {["Visa", "Mastercard", "Apple Pay", "Google Pay", "SEPA", "ACH"].map((method) => (
+            <span
+              key={method}
+              className="text-xs px-3 py-1 rounded-full border border-white/10 bg-white/5 text-muted-foreground"
+            >
+              {method}
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Safety Notice and Checkout button */}
       <div className="space-y-4">
         <div className="flex items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs text-muted-foreground">
@@ -251,7 +263,9 @@ function Inner() {
           <div className="space-y-1">
             <p className="font-semibold text-foreground">دفع آمن ومحمي بالكامل</p>
             <p>
-              يتم معالجة كافة المدفوعات والاشتراكات بشكل آمن ومشفّر عبر نظام **Paddle**، شريك معالجة المدفوعات المعتمد لدينا.
+              يتم معالجة المدفوعات بشكل آمن عبر منصة <strong>Card2Crypto</strong> — بوابة دفع دولية تقبل
+              بطاقات الائتمان والخصم وApple Pay وGoogle Pay وتحويلات SEPA. ستُفتح صفحة الدفع
+              في تبويب جديد لأسباب أمنية.
             </p>
           </div>
         </div>
@@ -263,11 +277,27 @@ function Inner() {
         >
           {busy ? (
             <Loader2 className="h-5 w-5 animate-spin" />
+          ) : paymentOpened ? (
+            <ExternalLink className="h-5 w-5" />
           ) : (
             <CreditCard className="h-5 w-5" />
           )}
-          {busy ? "يرجى الانتظار..." : `الانتقال للدفع الآمن بقيمة $${totalPrice}`}
+          {busy
+            ? "جارٍ تجهيز بوابة الدفع..."
+            : paymentOpened
+            ? `إعادة فتح صفحة الدفع ($${totalPrice})`
+            : `الانتقال للدفع الآمن بقيمة $${totalPrice}`}
         </Button>
+
+        {paymentOpened && (
+          <Button
+            variant="outline"
+            onClick={() => navigate({ to: "/dashboard" })}
+            className="w-full cursor-pointer border-white/10"
+          >
+            التحقق من حالة الاشتراك في لوحة التحكم
+          </Button>
+        )}
       </div>
     </div>
   );
