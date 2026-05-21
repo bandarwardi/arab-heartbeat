@@ -8,7 +8,7 @@ const db = admin.firestore();
 // Set this in Firebase environment config:
 //   firebase functions:secrets:set CARD2CRYPTO_USDC_WALLET
 // Or hardcode below if preferred (not recommended for production):
-const USDC_WALLET = process.env.CARD2CRYPTO_USDC_WALLET || "0xYOUR_USDC_POLYGON_WALLET_ADDRESS";
+const USDC_WALLET = process.env.CARD2CRYPTO_USDC_WALLET || "0xBDe25Ad679B4f75Bd686bbd822ee3200C9232221";
 const CARD2CRYPTO_API = "https://api.card2crypto.org";
 const CARD2CRYPTO_PAY = "https://pay.card2crypto.org";
 // Actual deployed callback URL from Firebase Functions
@@ -129,7 +129,7 @@ export const card2cryptoCallback = onRequest(
         return;
       }
 
-      const order = orderSnap.data()!;
+      const order = orderSnap.data();
 
       // 2. Verify the uid matches the order
       if (order.uid !== uid) {
